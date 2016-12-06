@@ -9,13 +9,12 @@ import scrapy
 from scrapy import Field
 
 class BookItem(scrapy.Item):
-    id = Field()
+    _id = Field()
     title = Field()
     author = Field()
-    publicPlace = Field()
     publicYear = Field()
     publisher = Field()
-    # summery = Field()
+    summery = Field()
     ISBN = Field()
     imgLarge = Field()
     imgMedium = Field()

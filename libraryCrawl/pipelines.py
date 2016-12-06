@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from pymongo import *
+
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
@@ -8,12 +10,14 @@
 
 class LibrarycrawlPipeline(object):
     def __init__(self):
-        self.f = open('/home/lizejie/project/python/spider/libraryCrawl/data/bookInfo.txt', 'ab')
-
+        mongodb = MongoClient('localhost', 27017)
+        db = mongodb.books
+        self.collection = db.books
+        self.errorCollection = db.errors
     def process_item(self, item, spider):
-        eachData = []
-        for each in item.values():
-            eachData.append(each.replace('\n', '').replace('\r', ''))
-        dataStr = '\n'.join(eachData).encode('utf8')
-        self.f.write(dataStr)
+        try:
+            self.collection.insert(item)
+        except:
+            errData = {'_id':item['_id'], 'ISBN':item['ISBN']}
+            self.errorCollection.insert(errData)
         return item
