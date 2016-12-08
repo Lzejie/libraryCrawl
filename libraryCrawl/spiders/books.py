@@ -24,7 +24,7 @@ class BooksSpider(scrapy.Spider):
     def parse(self, response):
         content = response.xpath('//span[@id="ctl00_ContentPlaceHolder1_bookcardinfolbl"]/text()').extract()
         bid = response.url.split('=')[-1]
-        jsonData = None
+        jsonData = {}
         try:
             ISBN = self.re_ISBN.findall(''.join(content))[0].replace(u'-', '')
             if u'（' in ISBN:
@@ -33,7 +33,7 @@ class BooksSpider(scrapy.Spider):
         except:
             ISBN = ''
 
-        if ISBN and jsonData:
+        if ISBN and jsonData.get('code', '0') != 6000:
             imgLarge = jsonData.get('images',{}).get('large', '')
             imgMedium = jsonData.get('images',{}).get('medium', '')
             imgsmall = jsonData.get('images',{}).get('small', '')
