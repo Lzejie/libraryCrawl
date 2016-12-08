@@ -3,13 +3,19 @@ import scrapy
 import re
 import json
 import urllib
+import pymongo
 
 from libraryCrawl.items import BookItem
 from libraryCrawl.header import getHeader
 
 class BooksSpider(scrapy.Spider):
     name = "books"
-    start_urls = ['http://210.38.207.15:169/web/bookinfo.aspx?ctrlno=%s'%index for index in range(1, 695500)]
+
+    crawled = set(map(lambda x:int(x),
+                      [item['_id'] for item in pymongo.MongoClient('localhost', 27017).books['books'].find()]))
+    total = set(range(695500))
+
+    start_urls = ['http://210.38.207.15:169/web/bookinfo.aspx?ctrlno=%s'%index for index in total - crawled]
 
     bookInfoUrl = 'https://api.douban.com/v2/book/isbn/%s'
 
